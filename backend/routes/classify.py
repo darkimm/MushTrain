@@ -5,12 +5,15 @@ import tensorflow as tf
 import json, io, base64
 from datetime import datetime
 from database import db  # <-- MOVED TO THE TOP HERE
+import os
 
 router = APIRouter()
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 # Load model once on startup
-model = tf.keras.models.load_model('model/mushroom_model.h5', compile=False)
-with open('model/class_indices.json', 'r') as f:
+model = tf.keras.models.load_model(os.path.join(BASE_DIR, 'model', 'mushroom_model.h5'), compile=False)
+with open(os.path.join(BASE_DIR, 'model', 'class_indices.json'), 'r') as f:
     class_indices = json.load(f)
 
 IMG_SIZE = 224

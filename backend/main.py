@@ -7,6 +7,8 @@ import os
 
 load_dotenv()
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 app = FastAPI(title="MushTrain API")
 
 app.add_middleware(
@@ -32,4 +34,4 @@ async def health():
     return {"status": "ok", "model": "MushTrain-CNN-v1"}
 
 # Serve frontend (must be last)
-app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
+app.mount("/", StaticFiles(directory=os.path.join(BASE_DIR, "frontend"), html=True), name="frontend")
