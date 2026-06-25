@@ -7,8 +7,6 @@ import os
 
 load_dotenv()
 
-print("MongoDB URI:", os.getenv("MONGODB_URI"))  # debug line — remove later
-
 app = FastAPI(title="MushTrain API")
 
 app.add_middleware(
