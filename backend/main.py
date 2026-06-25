@@ -22,8 +22,8 @@ client = AsyncIOMotorClient(os.getenv("MONGODB_URI"))
 db = client.mushtrain  # ← THIS LINE WAS MISSING
 
 # Register routes
-from backend.routes.classify import router as classify_router
-from backend.routes.dashboard import router as dashboard_router
+from routes.classify import router as classify_router
+from routes.dashboard import router as dashboard_router
 app.include_router(classify_router)
 app.include_router(dashboard_router)
 

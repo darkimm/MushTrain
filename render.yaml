@@ -2,10 +2,11 @@ services:
   - type: web
     name: mushtrain
     runtime: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: MONGODB_URI
-        sync: false   # You will paste this manually in Render dashboard
+        sync: false
       - key: PORT
         value: 8000
+    pythonVersion: "3.11.0"

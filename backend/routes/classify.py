@@ -4,12 +4,12 @@ import numpy as np
 import tensorflow as tf
 import json, io, base64
 from datetime import datetime
-from backend.database import db  # <-- MOVED TO THE TOP HERE
+from database import db  # <-- MOVED TO THE TOP HERE
 
 router = APIRouter()
 
 # Load model once on startup
-model = tf.keras.models.load_model('model/mushroom_model.h5')
+model = tf.keras.models.load_model('model/mushroom_model.h5', compile=False)
 with open('model/class_indices.json', 'r') as f:
     class_indices = json.load(f)
 
