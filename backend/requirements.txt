@@ -1,9 +1,9 @@
 fastapi
 uvicorn
 python-multipart
-tensorflow-cpu==2.15.0
-keras==2.15.0
-numpy==1.26.4
+tensorflow-cpu
+keras==3.14.1
+numpy
 Pillow
 pymongo
 python-dotenv
