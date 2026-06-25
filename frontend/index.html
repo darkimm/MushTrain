@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MushTrain — Mushroom Quality AI</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- ── Sidebar ─────────────────────────────────────── -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">🍄</div>
+      <div>
+        <div class="brand-name">MushTrain</div>
+        <div class="brand-tag">Mushroom Quality AI</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <button class="nav-btn active" data-tab="classify">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Classify
+      </button>
+      <button class="nav-btn" data-tab="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        Dashboard
+      </button>
+      <button class="nav-btn" data-tab="model">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        Model Info
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="model-badge">
+        <div class="badge-dot"></div>
+        <div>
+          <div class="badge-name">MushTrain CNN v1</div>
+          <div class="badge-arch">MobileNetV2 · TensorFlow</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Main Content ────────────────────────────────── -->
+  <main class="main">
+
+    <!-- CLASSIFY TAB -->
+    <div class="tab active" id="tab-classify">
+      <div class="page-header">
+        <h1>Classify Mushroom</h1>
+        <p>Upload or capture a mushroom photo — the AI will assess its quality instantly.</p>
+      </div>
+
+      <div class="classify-grid">
+        <!-- Upload side -->
+        <div class="upload-col">
+          <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+            <img id="preview" class="preview-img hidden" alt="Preview">
+            <div id="drop-placeholder">
+              <div class="drop-icon">🍄</div>
+              <div class="drop-title">Drop image here</div>
+              <div class="drop-sub">or click to browse · JPEG / PNG</div>
+            </div>
+          </div>
+          <input type="file" id="file-input" accept="image/*" hidden onchange="loadImage(this)">
+
+          <div class="action-btns">
+            <button class="btn-camera" onclick="openCamera()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              Use Camera
+            </button>
+            <button class="btn-classify" id="btn-classify" onclick="classifyImage()" disabled>
+              <span id="classify-text">Classify</span>
+              <span id="classify-spinner" class="spinner hidden"></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Result side -->
+        <div class="result-col">
+          <div class="result-card" id="result-card">
+            <div class="result-empty" id="result-empty">
+              <div class="empty-icon">🔬</div>
+              <div>Upload a mushroom image to see the AI classification result</div>
+            </div>
+
+            <div class="result-content hidden" id="result-content">
+              <div class="result-class-wrap">
+                <div class="result-eyebrow">Classification</div>
+                <div class="result-class" id="result-class">—</div>
+              </div>
+
+              <div class="conf-block">
+                <div class="conf-eyebrow">Confidence</div>
+                <div class="conf-row">
+                  <span class="conf-lbl"><span class="dot fresh-dot"></span> Fresh</span>
+                  <div class="conf-bar-bg"><div class="conf-bar fresh-bar" id="bar-fresh"></div></div>
+                  <span class="conf-pct" id="pct-fresh">0%</span>
+                </div>
+                <div class="conf-row">
+                  <span class="conf-lbl"><span class="dot damaged-dot"></span> Damaged</span>
+                  <div class="conf-bar-bg"><div class="conf-bar damaged-bar" id="bar-damaged"></div></div>
+                  <span class="conf-pct" id="pct-damaged">0%</span>
+                </div>
+                <div class="conf-row">
+                  <span class="conf-lbl"><span class="dot rotten-dot"></span> Rotten</span>
+                  <div class="conf-bar-bg"><div class="conf-bar rotten-bar" id="bar-rotten"></div></div>
+                  <span class="conf-pct" id="pct-rotten">0%</span>
+                </div>
+              </div>
+
+              <div class="result-footer">
+                <span>MushTrain CNN v1</span>
+                <span id="result-time"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- History -->
+          <div class="history-wrap" id="history-wrap"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DASHBOARD TAB -->
+    <div class="tab" id="tab-dashboard">
+      <div class="page-header">
+        <h1>Dashboard</h1>
+        <p>Classification activity and model performance overview.</p>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-icon">🔍</div>
+          <div class="stat-val" id="dash-total">0</div>
+          <div class="stat-lbl">Total Classifications</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🏆</div>
+          <div class="stat-val" id="dash-common">—</div>
+          <div class="stat-lbl">Most Common Result</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🕒</div>
+          <div class="stat-val" id="dash-last" style="font-size:14px;">—</div>
+          <div class="stat-lbl">Last Classification</div>
+        </div>
+      </div>
+
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="chart-title">Breakdown</div>
+          <div class="chart-wrap"><canvas id="chart-pie"></canvas></div>
+          <div class="chart-empty hidden" id="pie-empty">No data yet</div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Classifications Over Time</div>
+          <div class="chart-wrap"><canvas id="chart-line"></canvas></div>
+          <div class="chart-empty hidden" id="line-empty">No data yet</div>
+        </div>
+      </div>
+
+      <div class="recent-card">
+        <div class="chart-title">Recent Activity</div>
+        <div id="recent-list"><div class="empty-state">No classifications yet</div></div>
+      </div>
+    </div>
+
+    <!-- MODEL INFO TAB -->
+    <div class="tab" id="tab-model">
+      <div class="page-header">
+        <h1>Model Information</h1>
+        <p>Architecture, training details, and performance metrics of the custom CNN.</p>
+      </div>
+
+      <div class="model-grid">
+        <div class="model-card">
+          <div class="model-card-title">Architecture</div>
+          <div class="model-row"><span>Base Model</span><strong>MobileNetV2</strong></div>
+          <div class="model-row"><span>Pre-training</span><strong>ImageNet</strong></div>
+          <div class="model-row"><span>Input Size</span><strong>224 × 224 px</strong></div>
+          <div class="model-row"><span>Output Classes</span><strong>3 (Fresh, Damaged, Rotten)</strong></div>
+          <div class="model-row"><span>Framework</span><strong>TensorFlow / Keras</strong></div>
+        </div>
+
+        <div class="model-card">
+          <div class="model-card-title">Training Details</div>
+          <div class="model-row"><span>Technique</span><strong>Transfer Learning + Fine-tuning</strong></div>
+          <div class="model-row"><span>Optimizer</span><strong>Adam</strong></div>
+          <div class="model-row"><span>Loss Function</span><strong>Categorical Crossentropy</strong></div>
+          <div class="model-row"><span>Augmentation</span><strong>Rotation, Flip, Zoom, Brightness</strong></div>
+          <div class="model-row"><span>Train / Val Split</span><strong>80% / 20%</strong></div>
+        </div>
+
+        <div class="model-card">
+          <div class="model-card-title">Dataset</div>
+          <div class="model-row"><span>Total Images</span><strong>207</strong></div>
+          <div class="model-row"><span>Fresh</span><strong>78 images</strong></div>
+          <div class="model-row"><span>Damaged</span><strong>59 images</strong></div>
+          <div class="model-row"><span>Rotten</span><strong>70 images</strong></div>
+          <div class="model-row"><span>Collection</span><strong>Custom (self-collected)</strong></div>
+        </div>
+
+        <div class="model-card">
+          <div class="model-card-title">Performance</div>
+          <div class="model-row"><span>Training Accuracy</span><strong class="fresh-text">94.97%</strong></div>
+          <div class="model-row"><span>Validation Accuracy</span><strong class="fresh-text">89.74%</strong></div>
+          <div class="model-row"><span>Early Stopping</span><strong>Epoch 17 / 20</strong></div>
+          <div class="model-row"><span>Best Val Accuracy</span><strong class="fresh-text">89.74%</strong></div>
+          <div class="model-row"><span>Model File</span><strong>mushroom_model.h5</strong></div>
+        </div>
+      </div>
+
+      <div class="pipeline-card">
+        <div class="model-card-title">AI Pipeline</div>
+        <div class="pipeline">
+          <div class="pipeline-step">
+            <div class="pipeline-num">01</div>
+            <div class="pipeline-label">Data Acquisition</div>
+            <div class="pipeline-desc">207 mushroom images self-collected across 3 quality classes</div>
+          </div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-step">
+            <div class="pipeline-num">02</div>
+            <div class="pipeline-label">Preprocessing</div>
+            <div class="pipeline-desc">Resize 224×224, normalize 0–1, augmentation applied</div>
+          </div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-step">
+            <div class="pipeline-num">03</div>
+            <div class="pipeline-label">Model Training</div>
+            <div class="pipeline-desc">MobileNetV2 transfer learning + fine-tuning on Google Colab GPU</div>
+          </div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-step">
+            <div class="pipeline-num">04</div>
+            <div class="pipeline-label">Evaluation</div>
+            <div class="pipeline-desc">89.74% validation accuracy, confusion matrix, classification report</div>
+          </div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-step">
+            <div class="pipeline-num">05</div>
+            <div class="pipeline-label">Deployment</div>
+            <div class="pipeline-desc">FastAPI backend serving .h5 model, MongoDB Atlas logging</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Camera Modal -->
+  <div class="camera-modal" id="camera-modal">
+    <div class="camera-inner">
+      <div class="camera-header">
+        <span>Camera Capture</span>
+        <button class="camera-close" onclick="closeCamera()">✕</button>
+      </div>
+      <video id="camera-video" autoplay playsinline></video>
+      <canvas id="camera-canvas" hidden></canvas>
+      <div class="camera-controls">
+        <button class="btn-flip" onclick="flipCamera()">🔄 Flip</button>
+        <button class="btn-shutter" onclick="capturePhoto()">📷</button>
+        <button class="btn-cancel" onclick="closeCamera()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>

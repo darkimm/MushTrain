@@ -1,0 +1,15 @@
+# Virtual environment
+.venv/
+
+# Environment variables
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Dataset (optional — only exclude if it's large/not needed on Render)
+dataset/
+
+# Model files (optional — only if mushroom_model.h5 is too large for GitHub)
+# model/mushroom_model.h5
