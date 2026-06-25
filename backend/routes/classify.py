@@ -9,7 +9,7 @@ import os
 
 router = APIRouter()
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Load model once on startup
 model = tf.keras.models.load_model(os.path.join(BASE_DIR, 'model', 'mushroom_model.h5'), compile=False)
